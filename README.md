@@ -1,7 +1,7 @@
 # Efficient Data-aware Distance Comparison Operation for High-Dimensinal Approximate Nearest Neighbor Search
 
 ## Introduction
-This is the official implementation of the paper, entitled 'Efficient Data-aware Distance Comparison Operation for High-Dimensional Approximate Nearest Neighbor Search', which is submitted to VLDB2025.
+This is the official implementation of the paper, entitled 'Efficient Data-aware Distance Comparison Operation for High-Dimensional Approximate Nearest Neighbor Search', which is submitted to VLDB2025 and under-reviewed.
 
 Most of existing algorithms of AKNNs can be decomposed into two components, i.e., candidate generation and distance comparison operations (DCOs), where DCOs is to check whether the distance between the query and the candidate greater than the given threshold (i.e., the distance of the K nearest neighbor to the query searched so far). In this study, we focus on speed up the process of DCOs.
 
