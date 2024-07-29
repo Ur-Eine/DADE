@@ -28,7 +28,7 @@ do
             centroid_file="${data_path}/P${data}_centroid_${C}.fvecs"
         fi
 
-        # 0 - IVF, 1,3 - IVF++, 2,4 - IVF+
+        # 0 - IVF, 1 - IVF++, 2 - IVF+, 3 - IVF*, 4 - IVF**
         index_file="${index_path}/${data}_ivf_${C}_${adaptive}.index"
 
 
