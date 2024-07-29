@@ -55,22 +55,3 @@ It should be noted that the speed-up techniques for DCOs is not applied in this 
 ## Acknowledgement
 
 This repo is mainly based on the seminal work for DCOs, called ADSampling(https://github.com/gaoj0017/ADSampling). If you think this repo is helpful, please consider to cite their paper.
-
-```
-@article{DBLP:journals/pacmmod/GaoL23,
-  author       = {Jianyang Gao and
-                  Cheng Long},
-  title        = {High-Dimensional Approximate Nearest Neighbor Search: with Reliable
-                  and Efficient Distance Comparison Operations},
-  journal      = {Proc. {ACM} Manag. Data},
-  volume       = {1},
-  number       = {2},
-  pages        = {137:1--137:27},
-  year         = {2023},
-  url          = {https://doi.org/10.1145/3589282},
-  doi          = {10.1145/3589282},
-  timestamp    = {Fri, 07 Jul 2023 23:32:33 +0200},
-  biburl       = {https://dblp.org/rec/journals/pacmmod/GaoL23.bib},
-  bibsource    = {dblp computer science bibliography, https://dblp.org}
-}
-```
