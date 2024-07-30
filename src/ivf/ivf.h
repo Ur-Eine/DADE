@@ -95,7 +95,7 @@ IVF::IVF(const Matrix<float> &X, const Matrix<float> &_centroids, int adaptive){
 
     if(adaptive == 1)d = 32;        // IVF++ - optimize cache (d = 32 by default)
     else if(adaptive == 0) d = D;   // IVF   - plain scan
-    else d = 0;                     // IVF+  - plain ADSampling        
+    else d = 0;                     // IVF+  - plain DAD       
 
     L1_data   = new float [N * d + 1];
     res_data  = new float [N * (D - d) + 1];
@@ -152,8 +152,8 @@ ResultHeap IVF::search(float* query, size_t k, size_t nprobe, float distK) const
 
     // Scan a few initial dimensions and store the distances.
     // For IVF (i.e., apply FDScanning), it should be D. 
-    // For IVF+ (i.e., apply ADSampling without optimizing data layout), it should be 0.
-    // For IVF++ (i.e., apply ADSampling with optimizing data layout), it should be delta_d (i.e., 32). 
+    // For IVF+ (i.e., apply DAD without optimizing data layout), it should be 0.
+    // For IVF++ (i.e., apply DAD with optimizing data layout), it should be delta_d (i.e., 32). 
     int cur = 0;
     for(int i=0;i<nprobe;i++){
         int cluster_id = centroid_dist[i].second;
@@ -186,7 +186,7 @@ ResultHeap IVF::search(float* query, size_t k, size_t nprobe, float distK) const
             KNNs.emplace(candidates[i].first, candidates[i].second);
         }
     }
-    // d < D indicates ADSampling with and without cache-level optimization
+    // d < D indicates DAD with and without cache-level optimization
     if(d < D){
         auto cur_dist = dist;
         for(int i=0;i<nprobe;i++){

@@ -1,7 +1,7 @@
 
 
 /*
-The file is the core of the ADSampling algorithm. 
+The file is the core of the DAD algorithm. 
 We have included detailed comments in the function dist_comp. 
 Note that in the whole algorithm we do not calculate the square root of the distances.
 */

@@ -8,11 +8,11 @@ Function 1: searchBaseLayerST
     - the original search algorithm HNSW, which applies FDScanning for DCOs wrt the N_ef th NN
 
 Function 2: searchBaseLayerAD
-    - the proposed search algorithm HNSW+, which applies ADSampling for DCOs wrt the N_ef th NN
+    - the proposed search algorithm HNSW+, which applies DAD for DCOs wrt the N_ef th NN
 
 Function 2: searchBaseLayerADstar
-    - the proposed search algorithm HNSW++, which applies ADSampling for DCOs wrt the K th NN
-    - It applies the approximate distance (i.e., the by-product of ADSampling) as a key to guide graph routing.
+    - the proposed search algorithm HNSW++, which applies DAD for DCOs wrt the K th NN
+    - It applies the approximate distance (i.e., the by-product of DAD) as a key to guide graph routing.
 
 We have included detailed comments in these functions. 
 */
@@ -433,7 +433,7 @@ namespace hnswlib {
                             if (!top_candidates.empty())
                                 lowerBound = top_candidates.top().first;
                         }
-                        // Otherwise, conduct DCO with ADSampling wrt the N_ef th NN. 
+                        // Otherwise, conduct DCO with DAD wrt the N_ef th NN. 
                         else {
 #ifdef COUNT_DIST_TIME
                             StopW stopw = StopW();
@@ -550,7 +550,7 @@ namespace hnswlib {
                             if (!top_candidates.empty())
                                 lowerBoundcan = top_candidates.top().first;
                         }
-                        // Otherwise, conduct DCO with ADSampling wrt the Kth NN. 
+                        // Otherwise, conduct DCO with DAD wrt the Kth NN. 
                         else {
                             char *currObj1 = (getDataByInternalId(candidate_id));
 #ifdef COUNT_DIST_TIME
