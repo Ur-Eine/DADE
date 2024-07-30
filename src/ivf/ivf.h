@@ -17,7 +17,7 @@ We explain the important variables for the enhanced IVF as follows.
 #include <algorithm>
 #include <map>
 
-#include "adsampling.h"
+#include "dad.h"
 #include "matrix.h"
 #include "utils.h"
 
@@ -134,7 +134,7 @@ ResultHeap IVF::search(float* query, size_t k, size_t nprobe, float distK) const
 #endif
         centroid_dist[i].first = sqr_dist(query, centroids+i*D, D);
 #ifdef COUNT_DIST_TIME
-        adsampling::distance_time += stopw.getElapsedTimeMicro();
+        dad::distance_time += stopw.getElapsedTimeMicro();
 #endif               
         centroid_dist[i].second = i;
     }
@@ -145,7 +145,7 @@ ResultHeap IVF::search(float* query, size_t k, size_t nprobe, float distK) const
     size_t ncan = 0;
     for(int i=0;i<nprobe;i++)
         ncan += len[centroid_dist[i].second];
-    if(d == D)adsampling::tot_dimension += 1ll * ncan * D;
+    if(d == D)dad::tot_dimension += 1ll * ncan * D;
     float * dist = new float [ncan];
     Result * candidates = new Result [ncan];
     int * obj= new int [ncan];
@@ -164,7 +164,7 @@ ResultHeap IVF::search(float* query, size_t k, size_t nprobe, float distK) const
 #endif
             float tmp_dist = sqr_dist(query, L1_data + can * d, d);
 #ifdef COUNT_DIST_TIME
-            adsampling::distance_time += stopw.getElapsedTimeMicro();
+            dad::distance_time += stopw.getElapsedTimeMicro();
 #endif      
             if(d > 0)dist[cur] = tmp_dist;
             else dist[cur] = 0;
@@ -196,9 +196,9 @@ ResultHeap IVF::search(float* query, size_t k, size_t nprobe, float distK) const
 #ifdef COUNT_DIST_TIME
                 StopW stopw = StopW();
 #endif
-                float tmp_dist = adsampling::dist_comp(distK, res_data + can * (D-d), query + d, *cur_dist, d);
+                float tmp_dist = dad::dist_comp(distK, res_data + can * (D-d), query + d, *cur_dist, d);
 #ifdef COUNT_DIST_TIME
-                adsampling::distance_time += stopw.getElapsedTimeMicro();
+                dad::distance_time += stopw.getElapsedTimeMicro();
 #endif                     
                 if(tmp_dist > 0){
                     KNNs.emplace(tmp_dist, id[can]);

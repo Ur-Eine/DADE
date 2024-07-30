@@ -16,7 +16,7 @@ Note that in the whole algorithm we do not calculate the square root of the dist
 
 using namespace std;
 
-namespace adsampling{
+namespace dad{
 
 unsigned int D = 960; // The dimensionality of the dataset. 
 float epsilon0 = 2.1;  // epsilon0 - by default 2.1, recommended in [1.0,4.0], valid in in [0, +\infty) 

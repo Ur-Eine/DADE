@@ -14,7 +14,7 @@
 #include <utils.h>
 #include <hnswlib/hnswlib.h>
 #include <hnswlib/bruteforce.h>
-#include <adsampling.h>
+#include <dad.h>
 
 #include <getopt.h>
 
@@ -62,7 +62,7 @@ static void test_approx(float *massQ, size_t vecsize, size_t qsize, BruteforceSe
     size_t total = 0;
     long double total_time = 0;
 
-    adsampling::clear();
+    dad::clear();
 
     for (int i = 0; i < qsize; i++) {
 #ifndef WIN32
@@ -85,12 +85,12 @@ static void test_approx(float *massQ, size_t vecsize, size_t qsize, BruteforceSe
     long double recall = 1.0f * correct / total;
     
     freopen(result_path, "a", stdout);
-    if (adsampling::USE_PCA){
-        cout << adsampling::significance << " " << recall * 100.0 << " " << time_us_per_query << " " << adsampling::tot_dimension + adsampling::tot_full_dist * vecdim << endl;
-    }else if (adsampling::FIX_DIM){
-        cout << adsampling::fixed_d << " " << recall * 100.0 << " " << time_us_per_query << " " << adsampling::tot_dimension + adsampling::tot_full_dist * vecdim << endl;
+    if (dad::USE_PCA){
+        cout << dad::significance << " " << recall * 100.0 << " " << time_us_per_query << " " << dad::tot_dimension + dad::tot_full_dist * vecdim << endl;
+    }else if (dad::FIX_DIM){
+        cout << dad::fixed_d << " " << recall * 100.0 << " " << time_us_per_query << " " << dad::tot_dimension + dad::tot_full_dist * vecdim << endl;
     }else{
-        cout << adsampling::epsilon0 << " " << recall * 100.0 << " " << time_us_per_query << " " << adsampling::tot_dimension + adsampling::tot_full_dist * vecdim << endl;
+        cout << dad::epsilon0 << " " << recall * 100.0 << " " << time_us_per_query << " " << dad::tot_dimension + dad::tot_full_dist * vecdim << endl;
     }stdout = original_stdout;
     freopen("/dev/tty", "w", stdout);
     return ;
@@ -98,7 +98,7 @@ static void test_approx(float *massQ, size_t vecsize, size_t qsize, BruteforceSe
 
 static void test_vs_recall(float *massQ, size_t vecsize, size_t qsize, BruteforceSearch<float> &appr_alg, size_t vecdim,
                vector<std::priority_queue<std::pair<float, labeltype >>> &answers, size_t k, int adaptive, char epsilon_dir[], char result_path[], FILE* original_stdout) {
-    if (adsampling::USE_PCA){
+    if (dad::USE_PCA){
         vector<float> signs;
         char epsilon_path[256] = "";
         char significance_char[32] = "";
@@ -113,16 +113,16 @@ static void test_vs_recall(float *massQ, size_t vecsize, size_t qsize, Bruteforc
             Matrix<float> E(epsilon_path);
             vector<float> temp;
 
-            adsampling::significance = sign;
+            dad::significance = sign;
             temp.push_back(1.0e10);
             for(int i=0; i<vecdim; ++i){
                 temp.push_back(E.data[0*E.d+i]);
             }
-            swap(adsampling::epsilon, temp);
+            swap(dad::epsilon, temp);
             test_approx(massQ, vecsize, qsize, appr_alg, vecdim, answers, k, adaptive, result_path, original_stdout);
         }
     }else{
-        if (adsampling::FIX_DIM){
+        if (dad::FIX_DIM){
             int N_exp = 32;
             int delta_d = vecdim / N_exp;
             vector<int> fds;
@@ -130,7 +130,7 @@ static void test_vs_recall(float *massQ, size_t vecsize, size_t qsize, Bruteforc
                 fds.push_back(i * delta_d);
             }
             for (int fd : fds){
-                adsampling::fixed_d = fd;
+                dad::fixed_d = fd;
                 test_approx(massQ, vecsize, qsize, appr_alg, vecdim, answers, k, adaptive, result_path, original_stdout);
             }
         }
@@ -140,7 +140,7 @@ static void test_vs_recall(float *massQ, size_t vecsize, size_t qsize, Bruteforc
                 eps.push_back(i * 0.4 + 0.1);
             }
             for (float ep : eps) {
-                adsampling::epsilon0 = ep;
+                dad::epsilon0 = ep;
                 test_approx(massQ, vecsize, qsize, appr_alg, vecdim, answers, k, adaptive, result_path, original_stdout);
             }
         }
@@ -196,10 +196,10 @@ int main(int argc, char * argv[]) {
                 if(optarg)subk = atoi(optarg);
                 break;
             case 'e':
-                if(optarg)adsampling::epsilon0 = atof(optarg);
+                if(optarg)dad::epsilon0 = atof(optarg);
                 break;
             case 'p':
-                if(optarg)adsampling::delta_d = atoi(optarg);
+                if(optarg)dad::delta_d = atoi(optarg);
                 break;
             case 'i':
                 if(optarg)strcpy(index_path, optarg);
@@ -240,14 +240,14 @@ int main(int argc, char * argv[]) {
         StopW stopw = StopW();
         Q = mul(Q, P);
         rotation_time = stopw.getElapsedTimeMicro() / Q.n;
-        adsampling::D = Q.d;
+        dad::D = Q.d;
         if(randomize == 2){
             for(int i=0; i<Q.d; ++i){
-                adsampling::lmds.push_back(L.data[0*L.d+i]);
-            }adsampling::USE_PCA = true;
-            adsampling::compute_cdf_lmd();
+                dad::lmds.push_back(L.data[0*L.d+i]);
+            }dad::USE_PCA = true;
+            dad::compute_cdf_lmd();
         }if(randomize == 3 || randomize == 4){
-            adsampling::FIX_DIM = true;
+            dad::FIX_DIM = true;
             randomize = 3;
         }
     }

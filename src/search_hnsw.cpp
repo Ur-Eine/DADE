@@ -13,7 +13,7 @@
 #include <matrix.h>
 #include <utils.h>
 #include <hnswlib/hnswlib.h>
-#include <adsampling.h>
+#include <dad.h>
 
 #include <getopt.h>
 
@@ -60,7 +60,7 @@ static void test_approx(float *massQ, size_t vecsize, size_t qsize, Hierarchical
     size_t total = 0;
     long double total_time = 0;
 
-    adsampling::clear();
+    dad::clear();
 
     for (int i = 0; i < qsize; i++) {
 #ifndef WIN32
@@ -82,7 +82,7 @@ static void test_approx(float *massQ, size_t vecsize, size_t qsize, Hierarchical
     long double time_us_per_query = total_time / qsize + rotation_time;
     long double recall = 1.0f * correct / total;
     
-    cout << appr_alg.ef_ << " " << recall * 100.0 << " " << time_us_per_query << " " << adsampling::tot_dimension + adsampling::tot_full_dist * vecdim << endl;
+    cout << appr_alg.ef_ << " " << recall * 100.0 << " " << time_us_per_query << " " << dad::tot_dimension + dad::tot_full_dist * vecdim << endl;
     return ;
 }
 
@@ -147,10 +147,10 @@ int main(int argc, char * argv[]) {
                 if(optarg)subk = atoi(optarg);
                 break;
             case 'e':
-                if(optarg)adsampling::epsilon0 = atof(optarg);
+                if(optarg)dad::epsilon0 = atof(optarg);
                 break;
             case 'p':
-                if(optarg)adsampling::delta_d = atoi(optarg);
+                if(optarg)dad::delta_d = atoi(optarg);
                 break;
             case 'i':
                 if(optarg)strcpy(index_path, optarg);
@@ -192,14 +192,14 @@ int main(int argc, char * argv[]) {
         StopW stopw = StopW();
         Q = mul(Q, P);
         rotation_time = stopw.getElapsedTimeMicro() / Q.n;
-        adsampling::D = Q.d;
+        dad::D = Q.d;
         if(randomize == 3 || randomize == 4){
-            adsampling::epsilon.push_back(1.0e10);
+            dad::epsilon.push_back(1.0e10);
             for(int i=0; i<Q.d; ++i){
-                adsampling::lmds.push_back(L.data[0*L.d+i]);
-                adsampling::epsilon.push_back(E.data[0*L.d+i]);
-            }adsampling::USE_PCA = true;
-            adsampling::compute_cdf_lmd();
+                dad::lmds.push_back(L.data[0*L.d+i]);
+                dad::epsilon.push_back(E.data[0*L.d+i]);
+            }dad::USE_PCA = true;
+            dad::compute_cdf_lmd();
             randomize -= 2;
         }
     }
