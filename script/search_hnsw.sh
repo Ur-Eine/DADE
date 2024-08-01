@@ -43,7 +43,7 @@ do
             trans="${path}/${data}/O.fvecs"
         fi
 
-        res="${result_path}/${data}_ef${ef}_M${M}_K${K}_S${sign}_P${gap}_${randomize}.log"
+        res="${result_path}/${data}_HNSW_ef${ef}_M${M}_K${K}_S${sign}_P${gap}_${randomize}.log"
         query="${path}/${data}/${data}_query.fvecs"
         gnd="${path}/${data}/${data}_groundtruth.ivecs"
         lmds="${path}/${data}/LMD.fvecs"

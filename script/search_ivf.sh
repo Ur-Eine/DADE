@@ -39,7 +39,7 @@ do
             trans="${path}/${data}/O.fvecs"
         fi
 
-        res="${result_path}/${data}_IVF${C}_K${K}_S${sign}_P${gap}_${randomize}.log"
+        res="${result_path}/${data}_IVF_C${C}_K${K}_S${sign}_P${gap}_${randomize}.log"
         index="${path}/${data}/${data}_ivf_${C}_${randomize}.index"
 
         query="${path}/${data}/${data}_query.fvecs"
