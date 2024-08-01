@@ -42,7 +42,9 @@ The tested datasets are available at https://www.cse.cuhk.edu.hk/systems/hash/gq
 5. Preprocess the dataset with PCA orthogonal transformation. 
 
     ```shell
+    // To get the data-aware transformation matrix
     python pca.py
+    // To approximate the probability from data objects to control the dimension expansion
     python getEpsilon.py
     ```
 
