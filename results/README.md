@@ -17,7 +17,7 @@ In the files, each line contains 4 numbers. They represent
 The results of the experiments of linear scan are stored in the files with their names formatted in `./{dataset}_FLAT_{Some parameters}_{0/1/2/3/4}.log`.
 *   0 - Linear Scan
 *   1 - Linear Scan with ADSampling
-*   2 - Linear Scan with DAD
+*   2 - Linear Scan with DADE
 *   3 - Linear Scan with Random Orthogonal Transformation (Fixed Dimension)
 *   4 - Linear Scan with PCA Orthogonal Transformation (Fixed Dimension)
 

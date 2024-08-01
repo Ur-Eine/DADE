@@ -1,7 +1,7 @@
 
 
 /*
-The file is the core of the DAD algorithm. 
+The file is the core of the ADSampling&DADE algorithm. 
 We have included detailed comments in the function dist_comp. 
 Note that in the whole algorithm we do not calculate the square root of the distances.
 */
@@ -16,7 +16,7 @@ Note that in the whole algorithm we do not calculate the square root of the dist
 
 using namespace std;
 
-namespace dad{
+namespace dade{
 
 unsigned int D = 960; // The dimensionality of the dataset. 
 float epsilon0 = 2.1;  // epsilon0 - by default 2.1, recommended in [1.0,4.0], valid in in [0, +\infty) 

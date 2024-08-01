@@ -5,7 +5,7 @@ This is the official implementation of the paper, entitled 'Efficient Data-aware
 
 Most of existing algorithms of AKNNs can be decomposed into two components, i.e., candidate generation and distance comparison operations (DCOs), where DCOs is to check whether the distance between the query and the candidate greater than the given threshold (i.e., the distance of the K nearest neighbor to the query searched so far). In this study, we focus on speed up the process of DCOs.
 
-The main idea of this paper is to approximate the distance between the query and the candidate in the space with lower dimension to save the cost of distance computation. To fulfill this goal, we propose a method called DAD, in which we theoretically prove that the distance estimation is unbiased in terms of the data distribution and optimal if the transformation is orthogonal. Moreover, we notice that the number of dimensions for distance estimation is different for different query-candidate pairs to have a sufficient confidence. Thus, we propose a hypothesis testing approach to adaptively determine the number of dimensions, where the probability in terms of the distance deviation is approximated from the data objects.
+The main idea of this paper is to approximate the distance between the query and the candidate in the space with lower dimension to save the cost of distance computation. To fulfill this goal, we propose a method called DADE, in which we theoretically prove that the distance estimation is unbiased in terms of the data distribution and optimal if the transformation is orthogonal. Moreover, we notice that the number of dimensions for distance estimation is different for different query-candidate pairs to have a sufficient confidence. Thus, we propose a hypothesis testing approach to adaptively determine the number of dimensions, where the probability in terms of the distance deviation is approximated from the data objects.
 
 <!-- We note that we have included detailed comments of our core algorithms in 
 * `./src/adsampling.h`
@@ -13,7 +13,7 @@ The main idea of this paper is to approximate the distance between the query and
 * `./src/ivf/ivf.h` -->
 
 ## Repo Description
-We combine our DCO method with widely used AKNN search algorithms such as HNSW and IVF. The details of these algorithms can be found in `./src/hnswlib/hnswalg.h` and `./src/ivf/ivf.h`, respectively. The details of DAD can be found in `./src/dad.h`.
+We combine our DCO method with widely used AKNN search algorithms such as HNSW and IVF. The details of these algorithms can be found in `./src/hnswlib/hnswalg.h` and `./src/ivf/ivf.h`, respectively. The details of DADE can be found in `./src/dade.h`.
 
 ## Prerequisites
 

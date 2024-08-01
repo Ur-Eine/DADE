@@ -3,8 +3,8 @@
 *   Python == 3.8, numpy == 1.20.3, faiss, tqdm, matplotlib
 
     ```shell
-    conda create -n DAD python=3.8
-    conda activate DAD
+    conda create -n DADE python=3.8
+    conda activate DADE
     pip install numpy==1.20.3
     conda install -c pytorch faiss-gpu
     pip install tqdm

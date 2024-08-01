@@ -11,7 +11,7 @@
 #include <matrix.h>
 #include <utils.h>
 #include <ivf/ivf.h>
-#include <dad.h>
+#include <dade.h>
 #include <getopt.h>
 
 using namespace std;
@@ -31,7 +31,7 @@ void test(const Matrix<float> &Q, const Matrix<unsigned> &G, const IVF &ivf, int
     
     for(auto nprobe:nprobes){
         total_time=0;
-        dad::clear();
+        dade::clear();
         int correct = 0;
 
         for(int i=0;i<Q.n;i++){
@@ -52,7 +52,7 @@ void test(const Matrix<float> &Q, const Matrix<unsigned> &G, const IVF &ivf, int
         float recall = 1.0f * correct / (Q.n * k);
         
         // (Search Parameter, Recall, Average Time/Query(us), Total Dimensionality)
-        cout << nprobe << " " << recall * 100.00 << " " << time_us_per_query << " " << dad::tot_dimension << endl;
+        cout << nprobe << " " << recall * 100.00 << " " << time_us_per_query << " " << dade::tot_dimension << endl;
     }
 }
 
@@ -105,10 +105,10 @@ int main(int argc, char * argv[]) {
                 if(optarg)subk = atoi(optarg);
                 break;  
             case 'e':
-                if(optarg)dad::epsilon0 = atof(optarg);
+                if(optarg)dade::epsilon0 = atof(optarg);
                 break;
             case 'p':
-                if(optarg)dad::delta_d = atoi(optarg);
+                if(optarg)dade::delta_d = atoi(optarg);
                 break;              
             case 'i':
                 if(optarg)strcpy(index_path, optarg);
@@ -148,14 +148,14 @@ int main(int argc, char * argv[]) {
         StopW stopw = StopW();
         Q = mul(Q, P);
         rotation_time = stopw.getElapsedTimeMicro() / Q.n;
-        dad::D = Q.d;
+        dade::D = Q.d;
         if(randomize == 3 || randomize == 4){
-            dad::epsilon.push_back(1.0e10);
+            dade::epsilon.push_back(1.0e10);
             for(int i=0; i<Q.d; ++i){
-                dad::lmds.push_back(L.data[0*L.d+i]);
-                dad::epsilon.push_back(E.data[0*L.d+i]);
-            }dad::USE_PCA = true;
-            dad::compute_cdf_lmd();
+                dade::lmds.push_back(L.data[0*L.d+i]);
+                dade::epsilon.push_back(E.data[0*L.d+i]);
+            }dade::USE_PCA = true;
+            dade::compute_cdf_lmd();
             randomize -= 2;
         }
     }

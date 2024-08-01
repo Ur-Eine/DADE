@@ -8,11 +8,11 @@ Function 1: searchBaseLayerST
     - the original search algorithm HNSW, which applies FDScanning for DCOs wrt the N_ef th NN
 
 Function 2: searchBaseLayerAD
-    - the proposed search algorithm HNSW+, which applies DAD for DCOs wrt the N_ef th NN
+    - the proposed search algorithm HNSW+ or HNSW*, which applies ADSampling or DADE for DCOs wrt the N_ef th NN
 
 Function 2: searchBaseLayerADstar
-    - the proposed search algorithm HNSW++, which applies DAD for DCOs wrt the K th NN
-    - It applies the approximate distance (i.e., the by-product of DAD) as a key to guide graph routing.
+    - the proposed search algorithm HNSW++ or HNSW**, which applies ADSampling or DADE for DCOs wrt the K th NN
+    - It applies the approximate distance (i.e., the by-product of ADSampling or DADE) as a key to guide graph routing.
 
 We have included detailed comments in these functions. 
 */
@@ -20,7 +20,7 @@ We have included detailed comments in these functions.
 #include "visited_list_pool.h"
 #include "hnswlib.h"
 //#include "adasampling.h"
-#include "dad.h"
+#include "dade.h"
 #include <atomic>
 #include <random>
 #include <stdlib.h>
@@ -280,10 +280,10 @@ namespace hnswlib {
 #endif
                 dist_t dist = fstdistfunc_(data_point, getDataByInternalId(ep_id), dist_func_param_);
 #ifdef COUNT_DIST_TIME
-                dad::distance_time += stopw.getElapsedTimeMicro();
+                dade::distance_time += stopw.getElapsedTimeMicro();
 #endif          
-                dad::tot_dist_calculation++;
-                dad::tot_full_dist ++;
+                dade::tot_dist_calculation++;
+                dade::tot_full_dist ++;
                 lowerBound = dist;
                 top_candidates.emplace(dist, ep_id);
                 candidate_set.emplace(-dist, ep_id);
@@ -331,9 +331,9 @@ namespace hnswlib {
 #endif
                         dist_t dist = fstdistfunc_(data_point, currObj1, dist_func_param_);
 #ifdef COUNT_DIST_TIME
-                        dad::distance_time += stopw.getElapsedTimeMicro();
+                        dade::distance_time += stopw.getElapsedTimeMicro();
 #endif                  
-                        dad::tot_full_dist ++;
+                        dade::tot_full_dist ++;
                         if (top_candidates.size() < ef || lowerBound > dist) {                      
                             candidate_set.emplace(-dist, candidate_id);
                             if (!has_deletions || !isMarkedDeleted(candidate_id))
@@ -348,7 +348,7 @@ namespace hnswlib {
                     }
                 }
             }
-            dad::tot_dist_calculation += cnt_visit;
+            dade::tot_dist_calculation += cnt_visit;
             visited_list_pool_->releaseVisitedList(vl);
             return top_candidates;
         }
@@ -373,10 +373,10 @@ namespace hnswlib {
 #endif
                 dist_t dist = fstdistfunc_(data_point, getDataByInternalId(ep_id), dist_func_param_);
 #ifdef COUNT_DIST_TIME
-                dad::distance_time += stopw.getElapsedTimeMicro();
+                dade::distance_time += stopw.getElapsedTimeMicro();
 #endif          
-                dad::tot_dist_calculation++;
-                dad::tot_full_dist ++;
+                dade::tot_dist_calculation++;
+                dade::tot_full_dist ++;
                 lowerBound = dist;
                 top_candidates.emplace(dist, ep_id);
                 candidate_set.emplace(-dist, ep_id);
@@ -423,9 +423,9 @@ namespace hnswlib {
 #endif
                             dist_t dist = fstdistfunc_(data_point, currObj1, dist_func_param_);    
 #ifdef COUNT_DIST_TIME
-                            dad::distance_time += stopw.getElapsedTimeMicro();
+                            dade::distance_time += stopw.getElapsedTimeMicro();
 #endif                                         
-                            dad::tot_full_dist ++;
+                            dade::tot_full_dist ++;
                             if (!has_deletions || !isMarkedDeleted(candidate_id))
                                 candidate_set.emplace(-dist, candidate_id);
                             if (!has_deletions || !isMarkedDeleted(candidate_id))
@@ -433,14 +433,14 @@ namespace hnswlib {
                             if (!top_candidates.empty())
                                 lowerBound = top_candidates.top().first;
                         }
-                        // Otherwise, conduct DCO with DAD wrt the N_ef th NN. 
+                        // Otherwise, conduct DCO with ADSampling or DADE wrt the N_ef th NN. 
                         else {
 #ifdef COUNT_DIST_TIME
                             StopW stopw = StopW();
 #endif                            
-                            dist_t dist = dad::dist_comp(lowerBound, getDataByInternalId(candidate_id), data_point, 0, 0);
+                            dist_t dist = dade::dist_comp(lowerBound, getDataByInternalId(candidate_id), data_point, 0, 0);
 #ifdef COUNT_DIST_TIME
-                            dad::distance_time += stopw.getElapsedTimeMicro();
+                            dade::distance_time += stopw.getElapsedTimeMicro();
 #endif                               
                             if(dist >= 0){
                                 candidate_set.emplace(-dist, candidate_id);
@@ -455,7 +455,7 @@ namespace hnswlib {
                     }
                 }
             }
-            dad::tot_dist_calculation += cnt_visit;
+            dade::tot_dist_calculation += cnt_visit;
             visited_list_pool_->releaseVisitedList(vl);
             return top_candidates;
         }
@@ -483,10 +483,10 @@ namespace hnswlib {
 #endif                   
                 dist_t dist = fstdistfunc_(data_point, getDataByInternalId(ep_id), dist_func_param_);
 #ifdef COUNT_DIST_TIME
-                dad::distance_time += stopw.getElapsedTimeMicro();
+                dade::distance_time += stopw.getElapsedTimeMicro();
 #endif          
-                dad::tot_dist_calculation++;          
-                dad::tot_full_dist ++;
+                dade::tot_dist_calculation++;          
+                dade::tot_full_dist ++;
                 lowerBound = dist;
                 lowerBoundcan = dist;
                 answers.emplace(dist, ep_id);
@@ -537,9 +537,9 @@ namespace hnswlib {
 #endif                            
                             dist_t dist = fstdistfunc_(data_point, currObj1, dist_func_param_);    
 #ifdef COUNT_DIST_TIME
-                            dad::distance_time += stopw.getElapsedTimeMicro();
+                            dade::distance_time += stopw.getElapsedTimeMicro();
 #endif                             
-                            dad::tot_full_dist ++;
+                            dade::tot_full_dist ++;
                             if (!has_deletions || !isMarkedDeleted(candidate_id)){
                                 candidate_set.emplace(-dist, candidate_id);
                                 top_candidates.emplace(dist, candidate_id);
@@ -550,15 +550,15 @@ namespace hnswlib {
                             if (!top_candidates.empty())
                                 lowerBoundcan = top_candidates.top().first;
                         }
-                        // Otherwise, conduct DCO with DAD wrt the Kth NN. 
+                        // Otherwise, conduct DCO with ADSampling or DADE wrt the Kth NN. 
                         else {
                             char *currObj1 = (getDataByInternalId(candidate_id));
 #ifdef COUNT_DIST_TIME
                             StopW stopw = StopW();
 #endif                            
-                            dist_t dist = dad::dist_comp(lowerBound, currObj1, data_point, 0, 0);
+                            dist_t dist = dade::dist_comp(lowerBound, currObj1, data_point, 0, 0);
 #ifdef COUNT_DIST_TIME
-                            dad::distance_time += stopw.getElapsedTimeMicro();
+                            dade::distance_time += stopw.getElapsedTimeMicro();
 #endif                              
                             // If it's a positive object, then include it in R1, R2, S. 
                             if(dist >= 0){
@@ -593,7 +593,7 @@ namespace hnswlib {
                     }
                 }
             }
-            dad::tot_dist_calculation += cnt_visit;
+            dade::tot_dist_calculation += cnt_visit;
             visited_list_pool_->releaseVisitedList(vl);
             return answers;
         }
@@ -1396,9 +1396,9 @@ namespace hnswlib {
 #endif
             dist_t curdist = fstdistfunc_(query_data, getDataByInternalId(enterpoint_node_), dist_func_param_);
 #ifdef COUNT_DIST_TIME
-            dad::distance_time += stopw.getElapsedTimeMicro();
+            dade::distance_time += stopw.getElapsedTimeMicro();
 #endif
-            dad::tot_dist_calculation ++;
+            dade::tot_dist_calculation ++;
             for (int level = maxlevel_; level > 0; level--) {
                 
                 bool changed = true;
@@ -1417,14 +1417,14 @@ namespace hnswlib {
                         tableint cand = datal[i];
                         if (cand < 0 || cand > max_elements_)
                             throw std::runtime_error("cand error");
-                        dad::tot_dist_calculation ++;
+                        dade::tot_dist_calculation ++;
                         if(adaptive){
 #ifdef COUNT_DIST_TIME
                             StopW stopw = StopW();
 #endif
-                            dist_t d = dad::dist_comp(curdist, getDataByInternalId(cand), query_data, 0, 0);
+                            dist_t d = dade::dist_comp(curdist, getDataByInternalId(cand), query_data, 0, 0);
 #ifdef COUNT_DIST_TIME
-                            dad::distance_time += stopw.getElapsedTimeMicro();
+                            dade::distance_time += stopw.getElapsedTimeMicro();
 #endif
                             if(d > 0){
                                 curdist = d;
@@ -1438,9 +1438,9 @@ namespace hnswlib {
 #endif
                             dist_t d = fstdistfunc_(query_data, getDataByInternalId(cand), dist_func_param_);
 #ifdef COUNT_DIST_TIME
-                            dad::distance_time += stopw.getElapsedTimeMicro();
+                            dade::distance_time += stopw.getElapsedTimeMicro();
 #endif
-                            dad::tot_full_dist ++;
+                            dade::tot_full_dist ++;
                             if (d < curdist) {
                                 curdist = d;
                                 currObj = cand;

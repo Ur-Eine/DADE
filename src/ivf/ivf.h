@@ -17,7 +17,7 @@ We explain the important variables for the enhanced IVF as follows.
 #include <algorithm>
 #include <map>
 
-#include "dad.h"
+#include "dade.h"
 #include "matrix.h"
 #include "utils.h"
 
@@ -93,9 +93,9 @@ IVF::IVF(const Matrix<float> &X, const Matrix<float> &_centroids, int adaptive){
         }
     }
 
-    if(adaptive == 1)d = 32;        // IVF++ - optimize cache (d = 32 by default)
-    else if(adaptive == 0) d = D;   // IVF   - plain scan
-    else d = 0;                     // IVF+  - plain DAD       
+    if(adaptive == 1)d = 32;        // IVF++ or IVF**   - optimize cache (d = 32 by default)
+    else if(adaptive == 0) d = D;   // IVF              - plain scan
+    else d = 0;                     // IVF+ or IVF*     - plain ADSampling or DADE       
 
     L1_data   = new float [N * d + 1];
     res_data  = new float [N * (D - d) + 1];
@@ -134,7 +134,7 @@ ResultHeap IVF::search(float* query, size_t k, size_t nprobe, float distK) const
 #endif
         centroid_dist[i].first = sqr_dist(query, centroids+i*D, D);
 #ifdef COUNT_DIST_TIME
-        dad::distance_time += stopw.getElapsedTimeMicro();
+        dade::distance_time += stopw.getElapsedTimeMicro();
 #endif               
         centroid_dist[i].second = i;
     }
@@ -145,15 +145,15 @@ ResultHeap IVF::search(float* query, size_t k, size_t nprobe, float distK) const
     size_t ncan = 0;
     for(int i=0;i<nprobe;i++)
         ncan += len[centroid_dist[i].second];
-    if(d == D)dad::tot_dimension += 1ll * ncan * D;
+    if(d == D)dade::tot_dimension += 1ll * ncan * D;
     float * dist = new float [ncan];
     Result * candidates = new Result [ncan];
     int * obj= new int [ncan];
 
     // Scan a few initial dimensions and store the distances.
     // For IVF (i.e., apply FDScanning), it should be D. 
-    // For IVF+ (i.e., apply DAD without optimizing data layout), it should be 0.
-    // For IVF++ (i.e., apply DAD with optimizing data layout), it should be delta_d (i.e., 32). 
+    // For IVF+ or IVF* (i.e., apply ADSampling or DADE without optimizing data layout), it should be 0.
+    // For IVF++ or IVF** (i.e., apply ADSampling or DADE with optimizing data layout), it should be delta_d (i.e., 32). 
     int cur = 0;
     for(int i=0;i<nprobe;i++){
         int cluster_id = centroid_dist[i].second;
@@ -164,7 +164,7 @@ ResultHeap IVF::search(float* query, size_t k, size_t nprobe, float distK) const
 #endif
             float tmp_dist = sqr_dist(query, L1_data + can * d, d);
 #ifdef COUNT_DIST_TIME
-            dad::distance_time += stopw.getElapsedTimeMicro();
+            dade::distance_time += stopw.getElapsedTimeMicro();
 #endif      
             if(d > 0)dist[cur] = tmp_dist;
             else dist[cur] = 0;
@@ -186,7 +186,7 @@ ResultHeap IVF::search(float* query, size_t k, size_t nprobe, float distK) const
             KNNs.emplace(candidates[i].first, candidates[i].second);
         }
     }
-    // d < D indicates DAD with and without cache-level optimization
+    // d < D indicates ADSampling or DADE with and without cache-level optimization
     if(d < D){
         auto cur_dist = dist;
         for(int i=0;i<nprobe;i++){
@@ -196,9 +196,9 @@ ResultHeap IVF::search(float* query, size_t k, size_t nprobe, float distK) const
 #ifdef COUNT_DIST_TIME
                 StopW stopw = StopW();
 #endif
-                float tmp_dist = dad::dist_comp(distK, res_data + can * (D-d), query + d, *cur_dist, d);
+                float tmp_dist = dade::dist_comp(distK, res_data + can * (D-d), query + d, *cur_dist, d);
 #ifdef COUNT_DIST_TIME
-                dad::distance_time += stopw.getElapsedTimeMicro();
+                dade::distance_time += stopw.getElapsedTimeMicro();
 #endif                     
                 if(tmp_dist > 0){
                     KNNs.emplace(tmp_dist, id[can]);

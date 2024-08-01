@@ -1,6 +1,6 @@
 #pragma once
 #include "hnswlib.h"
-#include "dad.h"
+#include "dade.h"
 #include <unordered_map>
 #include <fstream>
 #include <mutex>
@@ -99,14 +99,14 @@ namespace hnswlib {
                 dist_t dist = fstdistfunc_(query_data, data_ + size_per_element_ * i, dist_func_param_);
                 topResults.push(std::pair<dist_t, labeltype>(dist, *((labeltype *) (data_ + size_per_element_ * i +
                                                                                     data_size_))));
-                dad::tot_full_dist++;
+                dade::tot_full_dist++;
             }
             dist_t lastdist = topResults.top().first;
             for (int i = k; i < cur_element_count; i++) {
                 dist_t dist;
                 if (adaptive == 0){
                     dist = fstdistfunc_(query_data, data_ + size_per_element_ * i, dist_func_param_);
-                    dad::tot_full_dist++;
+                    dade::tot_full_dist++;
 
                     if (dist <= lastdist) {
                         topResults.push(std::pair<dist_t, labeltype>(dist, *((labeltype *) (data_ + size_per_element_ * i +
@@ -116,7 +116,7 @@ namespace hnswlib {
                         lastdist = topResults.top().first;
                     }
                 }else{
-                    dist = dad::dist_comp(lastdist, data_ + size_per_element_ * i, query_data, 0, 0);
+                    dist = dade::dist_comp(lastdist, data_ + size_per_element_ * i, query_data, 0, 0);
 
                     if (dist >= 0) {
                         topResults.push(std::pair<dist_t, labeltype>(dist, *((labeltype *) (data_ + size_per_element_ * i +
