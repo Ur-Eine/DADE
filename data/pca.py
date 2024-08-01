@@ -45,6 +45,11 @@ if __name__ == "__main__":
         path = os.path.join(source, dataset)
         data_path = os.path.join(path, f'{dataset}_base.fvecs')
 
+        # check if dataset exists
+        if not os.path.exists(data_path):
+            print(f'{dataset} does not exist.')
+            continue
+
         # read data vectors
         print(f"Reading {dataset} from {data_path}.")
         X = read_fvecs(data_path)

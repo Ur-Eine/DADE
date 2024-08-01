@@ -46,6 +46,11 @@ if __name__ == '__main__':
         pca_cluster_path = os.path.join(path, f"P{dataset}_centroid_{K}.fvecs")
         transformation_P_path = os.path.join(path, 'P.fvecs')
 
+        # check if dataset exists
+        if not os.path.exists(data_path):
+            print(f'{dataset} does not exist.')
+            continue
+
         # read data vectors
         X = read_fvecs(data_path)
         O = read_fvecs(transformation_O_path)

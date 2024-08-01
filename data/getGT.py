@@ -41,6 +41,11 @@ if __name__ == "__main__":
         query_path = os.path.join(path, f'{dataset}_query.fvecs')
         gt_path = os.path.join(path, f'{dataset}_groundtruth.ivecs')
 
+        # check if dataset exists
+        if not os.path.exists(data_path) or not os.path.exists(query_path):
+            print(f'{dataset} does not exist.')
+            continue
+
         # check if groundtruth exists
         if os.path.exists(gt_path):
             print(f'{dataset}\'s groundtruth already exists.')

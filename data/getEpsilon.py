@@ -3,7 +3,6 @@ import numpy as np
 import struct
 import copy
 from tqdm import tqdm
-import matplotlib.pyplot as plt
 
 # base config
 N_s = 100000
@@ -53,6 +52,11 @@ if __name__ == "__main__":
         lambda_path = os.path.join(path, 'LMD.fvecs')
         significance_dir = os.path.join(path, 'E/')
         os.makedirs(significance_dir, exist_ok=True)
+
+        # check if dataset exists
+        if not os.path.exists(data_path):
+            print(f'{dataset} does not exist.')
+            continue
 
         # read data vectors & projection matrix & eigenvalues
         print(f"Reading {dataset} from {data_path}.")
