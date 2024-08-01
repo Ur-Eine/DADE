@@ -29,27 +29,40 @@ Following the seminal work for DCOs, i.e., ADSampling, we adopt Eigen in the ind
 The tested datasets are available at https://www.cse.cuhk.edu.hk/systems/hash/gqr/datasets.html. 
 
 1. Download and preprocess the datasets, in which the data-aware orthogonal transformation is obtained though PCA(principal components analysis). Detailed instructions can be found in `./data/README.md`.
-   ```
-    python ./data/pca.py
+    ```sh
+    cd ./data
+
+    python randomized.py
+    python pca.py
+    python getEpsilon.py
+    python ivf.py
     ```
 
 2. Index the datasets. It could take several hours. 
     ```sh
+    cd ../script
+
     # Index IVF/IVF+/IVF++/IVF*/IVF**
-    ./script/index_ivf.sh
+    sh index_ivf.sh
 
     # Index HNSW/HNSW+/HNSW++/HNSW*/HNSW**
-    ./script/index_hnsw.sh
+    sh index_hnsw.sh
+
+    # Index FLAT
+    sh index_flat.sh
     ```
 It should be noted that the speed-up techniques for DCOs is not applied in this phase since we want to eliminate the effect of different DCOs for the index structure. 
 
 3. Test the queries of the datasets. The results are generated in `./results/`. Detailed configurations can be found in `./script/README.md`.
     ```sh
-    # Index IVF/IVF+/IVF++/IVF*/IVF**
-    ./script/search_ivf.sh
+    # Search IVF/IVF+/IVF++/IVF*/IVF**
+    sh search_ivf.sh
 
-    # Index HNSW/HNSW+/HNSW++/IVF*/IVF**
-    ./script/search_hnsw.sh
+    # Search HNSW/HNSW+/HNSW++/IVF*/IVF**
+    sh search_hnsw.sh
+
+    # Search FLAT
+    sh search_flat.sh
     ```
 
 ## Acknowledgement
